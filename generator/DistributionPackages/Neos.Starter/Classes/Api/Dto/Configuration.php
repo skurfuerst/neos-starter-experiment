@@ -31,5 +31,10 @@ class Configuration
         return $this->activatedPackages;
     }
 
+    public function getSitePackageKey(): string
+    {
+
+    }
+
 
 }

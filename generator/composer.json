@@ -18,7 +18,8 @@
     "require": {
         "neos/flow": "~6.2.0",
         "neos/starter": "@dev",
-        "neos/welcome": "~6.2.0"
+        "neos/welcome": "~6.2.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "neos/kickstarter": "~6.2.0",
