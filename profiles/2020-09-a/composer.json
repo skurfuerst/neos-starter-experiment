@@ -13,7 +13,11 @@
     },
     "config": {
         "vendor-dir": "Packages/Libraries",
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "platform": {
+            "php": "7.4.0",
+            "ext-vips": "1.1.0"
+        }
     },
     "require": {
         "neos/neos": "~5.2.0",
@@ -27,7 +31,12 @@
         "neos/redirecthandler-ui": "~2.0",
 
         "neos/setup": "@dev",
-        "neos/neos-setup": "@dev"
+        "neos/neos-setup": "@dev",
+
+        "flowpack/cachebuster": "^1.0",
+        "rokka/imagine-vips": "0.*",
+        "packagefactory/atomicfusion-proptypes": "^2.0",
+        "sitegeist/kaleidoscope": "^5.1"
     },
     "require-dev": {
         "neos/buildessentials": "@dev",

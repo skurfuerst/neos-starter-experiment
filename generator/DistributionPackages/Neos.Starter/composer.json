@@ -1,0 +1,14 @@
+{
+    "name": "neos/starter",
+    "type": "neos-package",
+    "description": "Neos Starter (start.neos.io) package",
+    "license": ["LGPL-3.0-or-later"],
+    "require": {
+        "neos/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Starter\\": "Classes"
+        }
+    }
+}

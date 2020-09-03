@@ -1,0 +1,17 @@
+sitePackage.composer_json.require.neos_seo = Neos.Starter:Composer.Dependency {
+    composerPackage = 'neos/seo'
+
+    # TODO can be extracted from profile lateron...
+    version = '3.0.*'
+}
+
+distribution.readme.features.neos_seo = afx`
+    ### Neos SEO
+
+    In the inspector on the right side of the Neos backend, you'll find a new tab "SEO" where you can configure
+    properties related to how the page is rendered in search engines and social media embeds.
+
+    Example: ${Neos.Starter.markdownEmbedImageFromStarterFusion('Neos.Seo/inspector.png')}
+`
+
+sitePackage.contentDump.neos_seo = Neos.Starter:AddPropertiesToEachDocumentNode

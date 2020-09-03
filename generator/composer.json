@@ -17,6 +17,7 @@
     },
     "require": {
         "neos/flow": "~6.2.0",
+        "neos/starter": "@dev",
         "neos/welcome": "~6.2.0"
     },
     "require-dev": {

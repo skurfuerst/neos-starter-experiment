@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2711c4d98fc964a88767c9d6a45106eb",
+    "content-hash": "6076b4906768b67b0ea516e06aa019b5",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -2167,6 +2167,31 @@
             "description": "PSR-17 HTTP Factories",
             "homepage": "http://flow.neos.io",
             "time": "2019-09-26T09:05:20+00:00"
+        },
+        {
+            "name": "neos/starter",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./DistributionPackages/Neos.Starter",
+                "reference": "ff4fb7a4dcf3d3fce80d86c440fcf942913bcfc0"
+            },
+            "require": {
+                "neos/flow": "*"
+            },
+            "type": "neos-package",
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Starter\\": "Classes"
+                }
+            },
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "description": "Neos Starter (start.neos.io) package",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "neos/utility-arrays",
@@ -5746,6 +5771,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "neos/starter": 20,
         "neos/behat": 20
     },
     "prefer-stable": false,
