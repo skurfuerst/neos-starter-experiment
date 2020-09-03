@@ -1,0 +1,57 @@
+{
+    "name": "neos/neos-base-distribution",
+    "description": "Neos Base Distribution",
+    "license": "GPL-3.0+",
+    "support": {
+        "email": "hello@neos.io",
+        "slack": "http://slack.neos.io/",
+        "forum": "https://discuss.neos.io/",
+        "wiki": "https://discuss.neos.io/c/the-neos-project/project-documentation",
+        "issues": "https://github.com/neos/neos-development-collection/issues",
+        "docs": "http://neos.readthedocs.org/",
+        "source": "https://github.com/neos/neos-base-distribution"
+    },
+    "config": {
+        "vendor-dir": "Packages/Libraries",
+        "bin-dir": "bin"
+    },
+    "require": {
+        "neos/neos": "~5.2.0",
+        "neos/site-kickstarter": "~5.2.0",
+
+        "neos/demo": "@dev",
+        "neos/neos-ui": "@dev",
+        "neos/seo": "~3.0",
+        "neos/redirecthandler-neosadapter": "~4.0",
+        "neos/redirecthandler-databasestorage": "~4.0",
+        "neos/redirecthandler-ui": "~2.0",
+
+        "neos/setup": "@dev",
+        "neos/neos-setup": "@dev"
+    },
+    "require-dev": {
+        "neos/buildessentials": "@dev",
+        "mikey179/vfsstream": "^1.6",
+        "phpunit/phpunit": "^8.1",
+        "symfony/css-selector": "~2.0",
+        "neos/behat": "@dev"
+    },
+    "repositories": {
+        "distributionPackages": {
+            "type": "path",
+            "url": "./DistributionPackages/*"
+        }
+    },
+    "replace": {
+        "neos/neos-base-distribution": "5.2.3"
+    },
+    "suggest": {
+        "ext-pdo_sqlite": "For running functional tests out-of-the-box this is required"
+    },
+    "scripts": {
+        "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
+        "post-install-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
+        "post-package-update": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall",
+        "post-package-install": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall"
+    }
+}
