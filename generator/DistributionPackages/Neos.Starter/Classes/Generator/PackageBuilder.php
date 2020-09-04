@@ -5,6 +5,7 @@ namespace Neos\Starter\Generator;
 
 
 use Neos\Starter\Api\Dto\Configuration;
+use Neos\Starter\Utility\YamlWithComments;
 use Symfony\Component\Yaml\Yaml;
 
 class PackageBuilder
@@ -14,6 +15,8 @@ class PackageBuilder
     private ResultFiles $result;
     private ComposerFileBuilder $composerJson;
     private SiteExportManipulator $siteExport;
+
+    private array $superTypeProcessors = [];
 
     public function __construct(Configuration $configuration, ResultFiles $result)
     {
@@ -29,9 +32,23 @@ class PackageBuilder
         return $this->composerJson;
     }
 
-    public function addNodeType(string $fileNamePart, string $fileContent): void
+    public function addNodeType(string $fileNamePart, array $nodeTypeContent): void
     {
-        Yaml::parse($fileContent); // throws exception if invalid YAML
+        // call superTypeProcessors
+        foreach ($nodeTypeContent as $nodeTypeName => &$nodeTypeConfiguration) {
+            $superTypes = $nodeTypeConfiguration['superTypes'] ?? [];
+            foreach ($this->superTypeProcessors as $superTypeProcessor) {
+                $superTypes = $superTypeProcessor($nodeTypeName, $superTypes);
+            }
+
+            if (!count($superTypes)) {
+                $nodeTypeConfiguration['superTypes'] = $superTypes;
+            }
+        }
+
+        // TODO: maybe call nodeTypeConstraintProcessor
+
+        $fileContent = YamlWithComments::dump($nodeTypeContent);
         $this->result->add('Configuration/NodeTypes.' . $fileNamePart . '.yaml', $fileContent);
     }
 
@@ -53,6 +70,12 @@ class PackageBuilder
     public function siteExport(): SiteExportManipulator
     {
         return $this->siteExport;
+    }
+
+    public function addSuperTypeProcessor(\Closure $superTypeProcessor)
+    {
+
+        $this->superTypeProcessors[] = $superTypeProcessor;
     }
 
 

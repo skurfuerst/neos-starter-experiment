@@ -56,6 +56,11 @@ class DistributionBuilder
         return $this->result;
     }
 
+    public function addYamlFile(string $fileName, array $fileContent)
+    {
+        $this->result->add($fileName, $fileContent);
+    }
+
     public function addFile(string $fileName, string $fileContent)
     {
         $this->result->add($fileName, $fileContent);

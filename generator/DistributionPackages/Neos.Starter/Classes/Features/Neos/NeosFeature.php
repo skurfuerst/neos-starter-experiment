@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Neos\Starter\Features\Neos;
 
 
+use Neos\Starter\Utility\YamlWithComments;
+
 class NeosFeature
 {
 
     public function generate(\Neos\Starter\Api\Dto\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $distribution)
     {
-        $distribution->readme()->addSection( "
+        $distribution->readme()->addSection("
             # Neos Project {$configuration->getSitePackageKey()}
 
             This project was kickstarted by https://start.neos.io. This README explains the main features and how to get started.
@@ -35,7 +37,7 @@ class NeosFeature
             ## Features
         ");
 
-        $distribution->readme()->addSectionAtEnd( "
+        $distribution->readme()->addSectionAtEnd("
             ## Production Deployment Recommendations
 
             We suggest you use one of the following deployment strategies:
@@ -44,70 +46,75 @@ class NeosFeature
             - Ansistrano
         ");
 
-        $distribution->addFile('docker-compose.yml', "
-            ##################################################
-            ##### DEVELOPMENT ENVIRONMENT           ##########
-            ##################################################
+        $distribution->addYamlFile('docker-compose.yml', [
+            'version##' => YamlWithComments::comment('
+                ##################################################
+                ##### DEVELOPMENT ENVIRONMENT           ##########
+                ##################################################
 
-            # Public ports:
-            #  - 8081 -> Neos
-            #  - 13306 -> maria db (used for Neos)
+                # Public ports:
+                #  - 8081 -> Neos
+                #  - 13306 -> maria db (used for Neos)
+            '),
+            'version' => '3.5',
+            'services' => [
+                'neos##' => YamlWithComments::comment('Neos CMS (php-fpm)'),
+                'neos' => [
+                    'build' => [
+                        'context' => '.',
+                        'dockerfile' => './Dockerfile.dev'
+                    ],
+                    'environment' => [
+                        'FLOW_CONTEXT' => 'Development/Docker',
+                        'COMPOSER_CACHE_DIR' => '/composer_cache',
+                        'DB_NEOS_HOST##' => YamlWithComments::comment('DB connection'),
+                        'DB_NEOS_HOST' => 'maria-db',
+                        'DB_NEOS_PORT' => 3306,
+                        'DB_NEOS_PASSWORD' => 'neos',
+                        'DB_NEOS_USER' => 'neos',
+                        'DB_NEOS_DATABASE' => 'neos',
+                        'SITE_IMPORT_PACKAGE_KEY##' => YamlWithComments::comment('auto site import'),
+                        'SITE_IMPORT_PACKAGE_KEY' => $configuration->getSitePackageKey(),
+                        'ADMIN_USERNAME##' => YamlWithComments::comment('auto creation of admin user for Neos backend'),
+                        'ADMIN_USERNAME' => 'admin',
+                        'ADMIN_PASSWORD' => 'password',
+                    ],
+                    'volumes' => [
+                        './composer.json:/app/composer.json:cached',
+                        './composer.lock:/app/composer.lock:cached',
+                        './DistributionPackages/:/app/DistributionPackages/:ro,cached',
+                        YamlWithComments::comment('Content is writable to enable content dumps from inside the container'),
+                        "./DistributionPackages/{$configuration->getSitePackageKey()}/Resources/Private/Content:/app/DistributionPackages/{$configuration->getSitePackageKey()}/Resources/Private/Content/:cached",
+                        './Configuration/Development/Docker/:/app/Configuration/Development/Docker/:ro,cached',
+                        YamlWithComments::comment('Explicitly set up Composer cache for faster fetching of packages'),
+                        './tmp/composer_cache:/composer_cache:cached',
+                    ],
+                    'ports' => [
+                        '8081:8081'
+                    ],
+                    'depends_on' => [
+                        'maria-db'
+                    ]
+                ],
+                'maria-db##' => YamlWithComments::comment('Maria DB'),
+                'maria-db' => [
+                    'image' => 'mariadb:10.3',
+                    'ports' => [
+                        '13306:3306'
+                    ],
+                    'environment' => [
+                        'MYSQL_ROOT_PASSWORD' => 'neos',
+                        'MYSQL_DATABASE' => 'neos',
+                        'MYSQL_USER' => 'neos',
+                        'MYSQL_PASSWORD' => 'neos',
+                    ],
+                    'command##' => YamlWithComments::comment('use Unicode encoding as default!'),
+                    'command' => ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+                ]
+            ]
+        ]);
 
-            version: '3.5'
-            services:
-              #####
-              # Neos CMS (php-fpm)
-              neos:
-                build:
-                  context: .
-                  dockerfile: ./Dockerfile.dev
-                environment:
-                  FLOW_CONTEXT: 'Development/Docker'
-                  COMPOSER_CACHE_DIR: '/composer_cache'
-                  # DB connection
-                  DB_NEOS_HOST: 'maria-db'
-                  DB_NEOS_PORT: 3306
-                  DB_NEOS_PASSWORD: 'neos'
-                  DB_NEOS_USER: 'neos'
-                  DB_NEOS_DATABASE: 'neos'
-                  # auto site import
-                  SITE_IMPORT_PACKAGE_KEY: '{$configuration->getSitePackageKey()}'
-                  # auto creation of admin user for Neos backend
-                  ADMIN_USERNAME: 'admin'
-                  ADMIN_PASSWORD: 'password'
-                  NGINX_HOST: 'localhost'
-                  NGINX_PORT: 8081
-                volumes:
-                  - ./composer.json:/app/composer.json:cached
-                  - ./composer.lock:/app/composer.lock:cached
-                  - ./DistributionPackages/:/app/DistributionPackages/:ro,cached
-                  # Content is writable to enable content dumps from inside the container
-                  - ./DistributionPackages/{$configuration->getSitePackageKey()}/Resources/Private/Content:/app/DistributionPackages/{$configuration->getSitePackageKey()}/Resources/Private/Content/:cached
-                  - ./Configuration/Development/Docker/:/app/Configuration/Development/Docker/:ro,cached
-                  # Explicitly set up Composer cache for faster fetching of packages
-                  - ./tmp/composer_cache:/composer_cache:cached
-                ports:
-                  - 8081:8081
-                depends_on:
-                  - maria-db
-
-              #####
-              # Maria DB
-              maria-db:
-                image: mariadb:10.3
-                ports:
-                  - 13306:3306
-                environment:
-                  MYSQL_ROOT_PASSWORD: neos
-                  MYSQL_DATABASE: neos
-                  MYSQL_USER: neos
-                  MYSQL_PASSWORD: neos
-                # use Unicode encoding as default!
-                command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
-
-        ");
-
-        $distribution->addFile('Dockerfile.dev', "
+        $distribution->addFile('Dockerfile . dev', "
             FROM php:7.4.10-fpm-buster
 
             # Install intl, bcmath, pdo, pdo_mysql, mysqli, libvips
@@ -117,7 +124,7 @@ class NeosFeature
                 rm -rf /var/lib/apt/lists/* && \\
                 docker-php-ext-install intl bcmath pdo pdo_mysql mysqli xsl && \\
                 pecl install vips && \\
-                echo 'extension=vips.so' > /usr/local/etc/php/conf.d/vips.ini && \\
+                echo 'extension = vips . so' > /usr/local/etc/php/conf.d/vips.ini && \\
                 pecl install redis && docker-php-ext-enable redis
 
             # install git and unzip for Composer
