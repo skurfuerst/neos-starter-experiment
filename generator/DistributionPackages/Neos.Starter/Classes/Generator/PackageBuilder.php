@@ -4,21 +4,20 @@
 namespace Neos\Starter\Generator;
 
 
-use Neos\Starter\Api\Dto\Configuration;
+use Neos\Starter\Api\Configuration;
 use Neos\Starter\Utility\YamlWithComments;
-use Symfony\Component\Yaml\Yaml;
 
 class PackageBuilder
 {
 
     private Configuration $configuration;
-    private ResultFiles $result;
+    private Result $result;
     private ComposerFileBuilder $composerJson;
     private SiteExportManipulator $siteExport;
 
     private array $superTypeProcessors = [];
 
-    public function __construct(Configuration $configuration, ResultFiles $result)
+    public function __construct(Configuration $configuration, Result $result)
     {
         $this->configuration = $configuration;
         $this->result = $result;
@@ -49,7 +48,7 @@ class PackageBuilder
         // TODO: maybe call nodeTypeConstraintProcessor
 
         $fileContent = YamlWithComments::dump($nodeTypeContent);
-        $this->result->add('Configuration/NodeTypes.' . $fileNamePart . '.yaml', $fileContent);
+        $this->result->addFile('Configuration/NodeTypes.' . $fileNamePart . '.yaml', $fileContent);
     }
 
     public function addFusion(string $pathAndFileName, string $fileContent): void
@@ -59,7 +58,7 @@ class PackageBuilder
 
     public function addConfiguration(string $type, string $fileNamePart, string $fileContent): void
     {
-        $this->result->add("Configuration/{$type}.${fileNamePart}.yaml", $fileContent);
+        $this->result->addFile("Configuration/{$type}.${fileNamePart}.yaml", $fileContent);
     }
 
     public function generate(): void

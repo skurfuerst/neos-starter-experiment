@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Neos\Starter\Features\Seo;
+
+
 class SeoFeature
 {
-    public function prepare(\Neos\Starter\Api\Dto\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $projectBuilder)
+    public function prepare(\Neos\Starter\Api\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $projectBuilder)
     {
         $projectBuilder->sitePackage()->addSuperTypeProcessor(function (string $nodeTypeName, array $superTypes) {
             $superTypes['Neos.Neos:Document'] = null;

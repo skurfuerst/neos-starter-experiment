@@ -9,18 +9,12 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * @api
  */
-final class ProfileName implements \JsonSerializable
+final class ProjectName implements \JsonSerializable
 {
     private string $name;
 
-    const PROFILE_2020_09_A = '2020-09-a';
-
     private function __construct(string $name)
     {
-        if ($name !== self::PROFILE_2020_09_A) {
-            // lateron, support multiple profiles here.
-            throw new \RuntimeException('invalid profile');
-        }
         $this->name = $name;
     }
 
@@ -29,12 +23,7 @@ final class ProfileName implements \JsonSerializable
         return new self($name);
     }
 
-    public static function latest(): self
-    {
-        return new self(self::PROFILE_2020_09_A);
-    }
-
-    public function equals(ProfileName $other): bool
+    public function equals(ProjectName $other): bool
     {
         return $this->name === $other->name;
     }
@@ -46,6 +35,11 @@ final class ProfileName implements \JsonSerializable
 
     public function __toString(): string
     {
-        return 'ProfileName:' . $this->name;
+        return 'ProjectName:' . $this->name;
+    }
+
+    public function toPackageKey(): string
+    {
+        return preg_replace('/[^a-zA-Z0-9]/', '.', $this->name);
     }
 }

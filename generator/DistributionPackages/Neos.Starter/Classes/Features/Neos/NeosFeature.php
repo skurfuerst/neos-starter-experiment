@@ -4,47 +4,31 @@ declare(strict_types=1);
 
 namespace Neos\Starter\Features\Neos;
 
-
+use Neos\Flow\Annotations as Flow;
+use Neos\Starter\Api\Configuration;
+use Neos\Starter\Features\FeatureInterface;
+use Neos\Starter\Generator\DistributionBuilder;
+use Neos\Starter\Generator\StringBuilder;
 use Neos\Starter\Utility\YamlWithComments;
 
-class NeosFeature
+/**
+ * @Flow\Proxy(false)
+ */
+class NeosFeature implements FeatureInterface
 {
-
-    public function generate(\Neos\Starter\Api\Dto\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $distribution)
+    public function registerHooksBeforeActivation(Configuration $configuration, DistributionBuilder $projectBuilder)
     {
-        $distribution->readme()->addSection("
-            # Neos Project {$configuration->getSitePackageKey()}
+    }
 
-            This project was kickstarted by https://start.neos.io. This README explains the main features and how to get started.
+    public function activate(Configuration $configuration, DistributionBuilder $distribution)
+    {
+        $readmeStart = file_get_contents(__DIR__ . '/README_start.md');
+        $readmeStart = str_replace('{SITE_PACKAGE_KEY}', $configuration->getSitePackageKey(), $readmeStart);
+        $distribution->readme()->addSection($readmeStart);
 
-            ## Prerequisites
+        $distribution->composerJson()->merge(json_decode(file_get_contents(__DIR__ . '/composer.json'), true));
 
-            - You need [Docker](https://docker.com) installed. The instructions work on Mac, Linux and Windows.
-            - You need Composer installed on your host machine (and thus PHP).
-
-            ## Development Setup
-
-            Preparation:
-
-            - Run `composer install`
-            - Run `docker-compose pull`
-            - Run `docker-compose build --pull`
-
-            Start everything:
-
-            - Run `docker-compose up -d`
-
-            ## Features
-        ");
-
-        $distribution->readme()->addSectionAtEnd("
-            ## Production Deployment Recommendations
-
-            We suggest you use one of the following deployment strategies:
-
-            - Docker on production. (TODO: Gitlab file, ...)
-            - Ansistrano
-        ");
+        $distribution->readme()->addSectionAtEnd(file_get_contents(__DIR__ . '/README_end.md'));
 
         $distribution->addYamlFile('docker-compose.yml', [
             'version##' => YamlWithComments::comment('
@@ -114,50 +98,10 @@ class NeosFeature
             ]
         ]);
 
-        $distribution->addFile('Dockerfile . dev', "
-            FROM php:7.4.10-fpm-buster
+        $distribution->addFile('Dockerfile.dev', StringBuilder::fromString(file_get_contents(__DIR__ . '/Dockerfile.dev')));
+    }
 
-            # Install intl, bcmath, pdo, pdo_mysql, mysqli, libvips
-            RUN apt-get update -y && \\
-                apt-get install --no-install-recommends -y libicu-dev libxslt1-dev nginx-light libvips42 libvips-dev supervisor procps && \\
-                mkdir -p /var/log/supervisor && \\
-                rm -rf /var/lib/apt/lists/* && \\
-                docker-php-ext-install intl bcmath pdo pdo_mysql mysqli xsl && \\
-                pecl install vips && \\
-                echo 'extension = vips . so' > /usr/local/etc/php/conf.d/vips.ini && \\
-                pecl install redis && docker-php-ext-enable redis
-
-            # install git and unzip for Composer
-            RUN apt-get update -y && \\
-                apt-get install --no-install-recommends -y unzip git && \\
-                rm -rf /var/lib/apt/lists/*
-
-            # install composer
-            RUN curl --silent --show-error https://getcomposer.org/installer | php
-            RUN mv composer.phar /usr/local/bin/composer
-            RUN composer config --global cache-dir /composer_cache
-
-            # application entrypoint
-            ADD /deployment/local-dev/neos/entrypoint.sh /
-            ADD /deployment/config-files/memory-limit-php.ini /usr/local/etc/php/conf.d/memory-limit-php.ini
-            ADD /deployment/config-files/upload-limit-php.ini /usr/local/etc/php/conf.d/upload-limit-php.ini
-
-            RUN rm -Rf /usr/local/etc/php-fpm.*
-            ADD deployment/config-files/php-fpm.conf /usr/local/etc/php-fpm.conf
-
-            ADD /deployment/config-files/nginx.template.conf /etc/nginx/nginx.template
-            RUN mkdir -p /var/lib/nginx /usr/local/var/log/ & \
-                chown -R www-data /var/lib/nginx /usr/local/var/log/ /etc/nginx/
-
-            # cleanup & chown
-            RUN mkdir -p /app/Data/Persistent /app/Configuration/Development/Docker /composer_cache && \
-                chown -R www-data /app /composer_cache && \
-                apt-get clean
-
-            WORKDIR /app
-
-            USER www-data
-            ENTRYPOINT [ \"/entrypoint.sh\" ]
-        ");
+    public function deactivate(Configuration $configuration, DistributionBuilder $projectBuilder)
+    {
     }
 }

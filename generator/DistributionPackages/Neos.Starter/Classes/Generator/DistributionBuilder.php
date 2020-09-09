@@ -3,14 +3,17 @@
 
 namespace Neos\Starter\Generator;
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Starter\Api\Configuration;
+use Neos\Starter\Utility\YamlWithComments;
 
-use Neos\Starter\Api\Dto\Configuration;
-use Neos\Starter\Generator\Dto\Profile;
-
+/**
+ * @Flow\Proxy(false)
+ */
 class DistributionBuilder
 {
     private Configuration $configuration;
-    private ResultFiles $result;
+    private Result $result;
 
     private ComposerFileBuilder $composerJson;
     private PackageBuilder $sitePackage;
@@ -19,7 +22,7 @@ class DistributionBuilder
     private function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
-        $this->result = new ResultFiles();
+        $this->result = new Result();
 
         $this->composerJson = new ComposerFileBuilder($this->configuration, $this->result, 'composer.json');
         $this->sitePackage = new PackageBuilder($this->configuration, $this->result);
@@ -47,7 +50,7 @@ class DistributionBuilder
         return $this->readme;
     }
 
-    public function generate(): ResultFiles
+    public function generate(): Result
     {
         $this->composerJson->generate();
         $this->sitePackage->generate();
@@ -58,11 +61,11 @@ class DistributionBuilder
 
     public function addYamlFile(string $fileName, array $fileContent)
     {
-        $this->result->add($fileName, $fileContent);
+        $this->result->addYamlFile($fileName, $fileContent);
     }
 
-    public function addFile(string $fileName, string $fileContent)
+    public function addFile(string $fileName, StringBuilder $fileContent)
     {
-        $this->result->add($fileName, $fileContent);
+        $this->result->addStringFile($fileName, $fileContent);
     }
 }

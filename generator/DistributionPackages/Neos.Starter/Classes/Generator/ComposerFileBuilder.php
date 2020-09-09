@@ -4,26 +4,32 @@
 namespace Neos\Starter\Generator;
 
 
-use Neos\Starter\Api\Dto\Configuration;
+use Neos\Starter\Api\Configuration;
+use Neos\Utility\Arrays;
 
 class ComposerFileBuilder
 {
     private Configuration $configuration;
-    private ResultFiles $result;
+    private Result $result;
     private string $fileName;
 
     private array $composerConfig = [];
 
-    public function __construct(Configuration $configuration, ResultFiles $result, string $fileName)
+    public function __construct(Configuration $configuration, Result $result, string $fileName)
     {
         $this->configuration = $configuration;
         $this->result = $result;
         $this->fileName = $fileName;
     }
 
+    public function merge(array $mergeWith): void
+    {
+        $this->composerConfig = Arrays::arrayMergeRecursiveOverrule($this->composerConfig, $mergeWith);
+    }
+
     public function generate()
     {
-        $this->result->add($this->fileName, json_encode($this->composerConfig, JSON_PRETTY_PRINT));
+        $this->result->addJsonFile($this->fileName, $this->composerConfig);
     }
 
     /**
@@ -33,7 +39,7 @@ class ComposerFileBuilder
      */
     public function requirePackageFromProfile(string $composerPackageKey)
     {
-        $thus->composerConfig['require'][$composerPackageKey] = '* TODO extract from profile';
+        $this->composerConfig['require'][$composerPackageKey] = '* TODO extract from profile';
     }
 
 }

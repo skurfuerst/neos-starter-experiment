@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Neos\Starter\Api\Dto;
+namespace Neos\Starter\Generator\Dto;
 
 
 final class PackageList implements \JsonSerializable

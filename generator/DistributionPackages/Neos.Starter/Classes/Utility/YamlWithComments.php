@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Starter\Utility;
 
 
+use Neos\Starter\Generator\StringBuilder;
 use Symfony\Component\Yaml\Yaml;
 
 class YamlWithComments
@@ -15,7 +16,7 @@ class YamlWithComments
         return '##' . base64_encode($comment);
     }
 
-    public static function dump(array $input): string
+    public static function dump(array $input): StringBuilder
     {
         $sortedInput = self::sort($input);
 
@@ -39,7 +40,7 @@ class YamlWithComments
             return "\n" . $prefix . implode("\n" . $prefix, $commentLines);
         }, $yamlAsString);
 
-        return $yamlAsString;
+        return StringBuilder::fromString($yamlAsString);
     }
 
     /**
