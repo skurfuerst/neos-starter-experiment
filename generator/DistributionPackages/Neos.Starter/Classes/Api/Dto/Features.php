@@ -60,4 +60,17 @@ final class Features implements \JsonSerializable, \IteratorAggregate
     {
         return new \ArrayIterator($this->features);
     }
+
+    public function isEnabled(string $featureClassName): bool
+    {
+        $featureClassNameParts = explode('\\', $featureClassName);
+        $lastFeatureClassNamePart = end($featureClassNameParts);
+        foreach ($this->features as $feature) {
+            if ($feature->getFeatureName() . 'Feature' === $lastFeatureClassNamePart) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

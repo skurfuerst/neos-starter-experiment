@@ -7,8 +7,7 @@ namespace Neos\Starter\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Starter\Api\Configuration;
-use Neos\Starter\Features\FeatureInterface;
-use Neos\Starter\Generator\DistributionBuilder;
+use Neos\Starter\Generator\Generator;
 
 class StarterCommandController extends CommandController
 {
@@ -17,27 +16,9 @@ class StarterCommandController extends CommandController
     {
         $manifestFileContents = json_decode(file_get_contents($manifestFile), true);
         $configuration = Configuration::fromArray($manifestFileContents);
-        $distributionBuilder = DistributionBuilder::createBasedOnConfiguration($configuration);
 
-        $instanciatedFeatures = [];
-        foreach ($configuration->getFeatures() as $feature) {
-            $featureClassName = $feature->getClassName();
-            $instanciatedFeatures[] = new $featureClassName();
-        }
-
-        foreach ($instanciatedFeatures as $instanciatedFeature) {
-            assert($instanciatedFeature instanceof FeatureInterface);
-            $instanciatedFeature->registerHooksBeforeActivation($configuration, $distributionBuilder);
-        }
-
-        foreach ($instanciatedFeatures as $instanciatedFeature) {
-            assert($instanciatedFeature instanceof FeatureInterface);
-            $instanciatedFeature->activate($configuration, $distributionBuilder);
-        }
-
-        // TODO: non-instanciated features
-
-        $result = $distributionBuilder->generate();
+        $generator = new Generator($configuration);
+        $result = $generator->generate();
         $result->writeToFolder($outputFolder);
     }
 }

@@ -10,19 +10,19 @@ use Neos\Starter\Utility\YamlWithComments;
 class PackageBuilder
 {
 
-    private Configuration $configuration;
+    private GenerationContextInterface $generator;
     private Result $result;
     private ComposerFileBuilder $composerJson;
     private SiteExportManipulator $siteExport;
 
     private array $superTypeProcessors = [];
 
-    public function __construct(Configuration $configuration, Result $result)
+    public function __construct(GenerationContextInterface $generator, Result $result)
     {
-        $this->configuration = $configuration;
+        $this->generator = $generator;
         $this->result = $result;
-        $this->composerJson = new ComposerFileBuilder($this->configuration, $this->result, 'DistributionPackages/' . $configuration->getSitePackageKey() . '/composer.json');
-        $this->siteExport = new SiteExportManipulator($this->configuration, $this->result, 'DistributionPackages/' . $configuration->getSitePackageKey() . '/Resources/Private/Content.xml');
+        $this->composerJson = new ComposerFileBuilder($this->generator, $this->result, 'DistributionPackages/' . $generator->getConfiguration()->getSitePackageKey() . '/composer.json');
+        $this->siteExport = new SiteExportManipulator($this->generator, $this->result, 'DistributionPackages/' . $generator->getConfiguration()->getSitePackageKey() . '/Resources/Private/Content.xml');
     }
 
 

@@ -36,7 +36,8 @@
         "flowpack/cachebuster": "^1.0",
         "rokka/imagine-vips": "0.*",
         "packagefactory/atomicfusion-proptypes": "^2.0",
-        "sitegeist/kaleidoscope": "^5.1"
+        "sitegeist/kaleidoscope": "^5.1",
+        "sandstorm/optimizedrediscachebackend": "^1.1"
     },
     "require-dev": {
         "neos/buildessentials": "@dev",

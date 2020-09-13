@@ -5,6 +5,9 @@ namespace Neos\Starter\Generator;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Starter\Api\Configuration;
+use Neos\Starter\Generator\Hooks\JsonFileManipulator;
+use Neos\Starter\Generator\Hooks\StringFileManipulator;
+use Neos\Starter\Generator\Hooks\YamlFileManipulator;
 use Neos\Starter\Utility\YamlWithComments;
 
 /**
@@ -12,28 +15,37 @@ use Neos\Starter\Utility\YamlWithComments;
  */
 class DistributionBuilder
 {
-    private Configuration $configuration;
+    private GenerationContextInterface $generator;
     private Result $result;
 
     private ComposerFileBuilder $composerJson;
     private PackageBuilder $sitePackage;
     private ReadmeBuilder $readme;
 
-    private function __construct(Configuration $configuration)
+    public function __construct(GenerationContextInterface $generator)
     {
-        $this->configuration = $configuration;
+        $this->generator = $generator;
         $this->result = new Result();
 
-        $this->composerJson = new ComposerFileBuilder($this->configuration, $this->result, 'composer.json');
-        $this->sitePackage = new PackageBuilder($this->configuration, $this->result);
-        $this->readme = new ReadmeBuilder($this->configuration, $this->result);
+        $this->composerJson = new ComposerFileBuilder($this->generator, $this->result, 'composer.json');
+        $this->sitePackage = new PackageBuilder($this->generator, $this->result);
+        $this->readme = new ReadmeBuilder($this->generator, $this->result);
     }
 
-
-    public static function createBasedOnConfiguration(Configuration $configuration): self
+    public function onStringFile(StringFileManipulator $manipulator): void
     {
-        return new self($configuration);
+        $this->result->onStringFile($manipulator);
     }
+
+    public function onYamlFile(YamlFileManipulator $manipulator): void
+    {
+        $this->result->onYamlFile($manipulator);
+    }
+    public function onJsonFile(JsonFileManipulator $manipulator): void
+    {
+        $this->result->onJsonFile($manipulator);
+    }
+
 
     public function composerJson(): ComposerFileBuilder
     {

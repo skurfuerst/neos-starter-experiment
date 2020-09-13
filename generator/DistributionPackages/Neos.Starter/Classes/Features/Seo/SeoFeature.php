@@ -17,8 +17,8 @@ class SeoFeature
 
     public function add(\Neos\Starter\Api\Dto\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $projectBuilder)
     {
-        $projectBuilder->sitePackage()->composerJson()->requirePackageFromProfile('neos/seo');
-        $projectBuilder->sitePackage()->composerJson()->requirePackageFromProfile('yoast/seo TODO');
+        $projectBuilder->sitePackage()->composerJson()->requirePackage('neos/seo');
+        $projectBuilder->sitePackage()->composerJson()->requirePackage('yoast/seo TODO');
 
         $projectBuilder->sitePackage()->addNodeType('Document.Foo', [
             "{$configuration->getSitePackageKey()}:Document.Foo" => [

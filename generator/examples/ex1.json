@@ -3,6 +3,15 @@
     "features": [
         {
             "name": "Neos"
+        },
+        {
+            "name": "DockerCompose"
+        },
+        {
+            "name": "Redis"
+        },
+        {
+            "name": "Vips"
         }
     ]
 }

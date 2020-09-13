@@ -48,8 +48,11 @@ final class Feature implements \JsonSerializable
         return 'Package List Item:' . $this->featureName;
     }
 
-    public function getClassName(): string
+    /**
+     * @return string
+     */
+    public function getFeatureName(): string
     {
-        return 'Neos\\Starter\\Features\\' . $this->featureName . '\\' . $this->featureName . 'Feature';
+        return $this->featureName;
     }
 }

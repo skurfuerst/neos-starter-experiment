@@ -4,33 +4,34 @@
 namespace Neos\Starter\Generator\Dto;
 
 
-use Neos\Starter\Api\Dto\Configuration;
-use Neos\Starter\Api\Dto\PackageList;
-use Neos\Starter\Api\Dto\PackageListItem;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 class Profile
 {
-    private PackageList $includedPackages;
+    private array $composerRequires;
 
-    public function fromComposerJsonString(string $composerJsonString): self
+    /**
+     * Profile constructor.
+     * @param array $composerRequires
+     */
+    private function __construct(array $composerRequires)
     {
-        $composerJsonFile = json_decode($composerJsonString, trur);
-        $composerRequires = $composerJsonFile['require'];
-
-
+        $this->composerRequires = $composerRequires;
     }
 
-    public function ensureConfigurationMatchesProfile(Configuration $configuration): void
+
+    public static function fromComposerJsonString(string $composerJsonString): self
     {
-        $packagesNotCoveredByProfile = $configuration->getActivatedPackages()->subtract($this->includedPackages);
-        if ($packagesNotCoveredByProfile->isEmpty()) {
-            throw new \RuntimeException('TODO: too many packages specified');
-        }
+        $composerJsonFile = json_decode($composerJsonString, true);
+        return new self($composerJsonFile['require']);
     }
 
-    public function calculatePackagesToRemove(Configuration $configuration): PackageList
+    public function getVersionConstraintForComposerKey(string $composerPackageKey): string
     {
-
+        return $this->composerRequires[$composerPackageKey];
     }
 
 

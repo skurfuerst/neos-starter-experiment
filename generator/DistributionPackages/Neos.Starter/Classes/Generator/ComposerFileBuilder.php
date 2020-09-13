@@ -9,15 +9,15 @@ use Neos\Utility\Arrays;
 
 class ComposerFileBuilder
 {
-    private Configuration $configuration;
+    private GenerationContextInterface $generator;
     private Result $result;
     private string $fileName;
 
     private array $composerConfig = [];
 
-    public function __construct(Configuration $configuration, Result $result, string $fileName)
+    public function __construct(GenerationContextInterface $generator, Result $result, string $fileName)
     {
-        $this->configuration = $configuration;
+        $this->generator = $generator;
         $this->result = $result;
         $this->fileName = $fileName;
     }
@@ -33,13 +33,12 @@ class ComposerFileBuilder
     }
 
     /**
-     * require a package in the version constraint which is currently included in the current profile
-     *
      * @param string $composerPackageKey
+     * @param string $versionConstraint
      */
-    public function requirePackageFromProfile(string $composerPackageKey)
+    public function requirePackage(string $composerPackageKey, string $versionConstraint)
     {
-        $this->composerConfig['require'][$composerPackageKey] = '* TODO extract from profile';
+        $this->composerConfig['require'][$composerPackageKey] = $versionConstraint;
     }
 
 }

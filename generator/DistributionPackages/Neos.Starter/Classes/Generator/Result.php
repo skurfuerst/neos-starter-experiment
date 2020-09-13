@@ -45,9 +45,9 @@ class Result
         $this->addStringFile($fileName, YamlWithComments::dump($fileContent));
     }
 
-    public function onYamlFile(YamlFileManipulator $yamlFileManipulator)
+    public function onYamlFile(YamlFileManipulator $manipulator)
     {
-        $this->yamlFileManipulators[] = $yamlFileManipulator;
+        $this->yamlFileManipulators[] = $manipulator;
     }
 
     public function addJsonFile(string $fileName, array $fileContent): void
@@ -56,6 +56,11 @@ class Result
             $fileContent = $jsonFileManipulator->transformJsonFile($fileName, $fileContent);
         }
         $this->addStringFile($fileName, StringBuilder::fromString(json_encode($fileContent, JSON_PRETTY_PRINT)));
+    }
+
+    public function onJsonFile(JsonFileManipulator $manipulator)
+    {
+        $this->jsonFileManipulators[] = $manipulator;
     }
 
     public function addStringFile(string $fileName, StringBuilder $fileContent): void
@@ -73,6 +78,11 @@ class Result
         }
 
         $this->files[$fileName] = $fileContent->build();
+    }
+
+    public function onStringFile(StringFileManipulator $manipulator)
+    {
+        $this->stringFileManipulators[] = $manipulator;
     }
 
     public function writeToFolder(string $baseDirectory)

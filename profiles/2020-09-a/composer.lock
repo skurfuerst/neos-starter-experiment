@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a284388aa6c36d0ec336f49cbd28b05",
+    "content-hash": "3ff9c45e94bee632f30bee4b31a76ed6",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -6601,6 +6601,40 @@
                 "vips"
             ],
             "time": "2020-07-14T08:37:10+00:00"
+        },
+        {
+            "name": "sandstorm/optimizedrediscachebackend",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sandstorm/OptimizedRedisCacheBackend.git",
+                "reference": "cacbe984a22ef48a4cc65b1115e23bc7ce5cf3de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sandstorm/OptimizedRedisCacheBackend/zipball/cacbe984a22ef48a4cc65b1115e23bc7ce5cf3de",
+                "reference": "cacbe984a22ef48a4cc65b1115e23bc7ce5cf3de",
+                "shasum": ""
+            },
+            "require": {
+                "neos/flow": "^6.0 || dev-master"
+            },
+            "type": "neos-package",
+            "extra": {
+                "neos": {
+                    "package-key": "Sandstorm.OptimizedRedisCacheBackend"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sandstorm\\OptimizedRedisCacheBackend\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2020-04-21T12:30:34+00:00"
         },
         {
             "name": "seld/jsonlint",

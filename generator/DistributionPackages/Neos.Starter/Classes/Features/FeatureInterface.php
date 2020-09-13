@@ -7,13 +7,16 @@ namespace Neos\Starter\Features;
 
 use Neos\Starter\Api\Configuration;
 use Neos\Starter\Generator\DistributionBuilder;
+use Neos\Starter\Generator\GenerationContextInterface;
 
 interface FeatureInterface
 {
 
-    public function registerHooksBeforeActivation(Configuration $configuration, DistributionBuilder $projectBuilder);
+    public static function create(GenerationContextInterface $generationContext, DistributionBuilder $distributionBuilder): self;
 
-    public function activate(Configuration $configuration, DistributionBuilder $distribution);
+    public function registerHooksBeforeActivation();
 
-    public function deactivate(Configuration $configuration, DistributionBuilder $projectBuilder);
+    public function activate();
+
+    public function deactivate();
 }

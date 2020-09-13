@@ -8,7 +8,7 @@ use Neos\Starter\Api\Configuration;
 
 class ReadmeBuilder
 {
-    private Configuration $configuration;
+    private GenerationContextInterface $generator;
     private Result $result;
 
     private StringBuilder $contents;
@@ -18,9 +18,9 @@ class ReadmeBuilder
      * @param Configuration $configuration
      * @param Result $result
      */
-    public function __construct(Configuration $configuration, Result $result)
+    public function __construct(GenerationContextInterface $generator, Result $result)
     {
-        $this->configuration = $configuration;
+        $this->generator = $generator;
         $this->result = $result;
         $this->contents = StringBuilder::create();
     }
