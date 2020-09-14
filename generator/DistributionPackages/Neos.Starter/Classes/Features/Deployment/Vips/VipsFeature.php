@@ -24,7 +24,7 @@ class VipsFeature extends AbstractFeature
 
     public function activate()
     {
-        $this->addComposerRequirementFromProfile('rokka/imagine-vips', $this->distributionBuilder->sitePackage()->composerJson());
+        $this->addComposerRequirementFromProfile('rokka/imagine-vips', $this->distributionBuilder->composerJson());
         $this->distributionBuilder->composerJson()->merge([
             'config' => [
                 'platform' => [
