@@ -29,6 +29,17 @@ class NeosFeature extends AbstractFeature
         $this->distributionBuilder->readme()->addSection($readmeStart);
 
         $this->distributionBuilder->composerJson()->merge(json_decode(file_get_contents(__DIR__ . '/composer.json'), true));
+        $this->distributionBuilder->composerJson()->merge([
+            'name' => $this->generationContext->getConfiguration()->getSiteComposerKey() . '-distribution'
+        ]);
+
+        $this->distributionBuilder->sitePackage()->composerJson()->merge([
+            'name' => $this->generationContext->getConfiguration()->getSiteComposerKey()
+        ]);
+
+        $this->distributionBuilder->composerJson()->requirePackage($this->generationContext->getConfiguration()->getSiteComposerKey(), '@dev');
+
+        $this->distributionBuilder->addFile('composer.lock', StringBuilder::fromString('{}'));
 
         $this->distributionBuilder->readme()->addSectionAtEnd(file_get_contents(__DIR__ . '/README_end.md'));
 

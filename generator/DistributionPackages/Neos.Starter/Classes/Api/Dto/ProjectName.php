@@ -42,4 +42,9 @@ final class ProjectName implements \JsonSerializable
     {
         return preg_replace('/[^a-zA-Z0-9]/', '.', $this->name);
     }
+
+    public function toComposerKey()
+    {
+        return strtolower(preg_replace('/[^a-zA-Z0-9]/', '/', $this->name));
+    }
 }

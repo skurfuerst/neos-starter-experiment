@@ -13,6 +13,7 @@ use Neos\Starter\Features\FeatureInterface;
 use Neos\Starter\Generator\DistributionBuilder;
 use Neos\Starter\Generator\GenerationContextInterface;
 use Neos\Starter\Generator\StringBuilder;
+use Neos\Starter\Utility\StringOutdenter;
 use Neos\Starter\Utility\YamlWithComments;
 
 /**
@@ -28,6 +29,8 @@ class DockerComposeFeature extends AbstractFeature
     {
         $this->buildDockerComposeFile();
         $this->buildDockerfile();
+        $this->buildEntrypoint();
+        $this->buildFlowConfigForDocker();
     }
 
     public function deactivate()
@@ -128,7 +131,7 @@ class DockerComposeFeature extends AbstractFeature
         $extraInstallLinesArray = [];
 
         if ($this->generationContext->isFeatureEnabled(VipsFeature::class)) {
-            $aptPackages .= 'libvips42 libvips-dev';
+            $aptPackages .= ' libvips42 libvips-dev';
             $extraInstallLinesArray[] = '    pecl install vips && \\';
             $extraInstallLinesArray[] = '    echo "extension = vips.so" > /usr/local/etc/php/conf.d/vips.ini && \\';
         }
@@ -160,11 +163,11 @@ class DockerComposeFeature extends AbstractFeature
 
         $dockerfile->addString("
             # application entrypoint
-            ADD /deployment/local-dev/neos/entrypoint.sh /
+            ADD deployment/entrypoint-local-dev.sh /entrypoint-local-dev.sh
 
             ADD deployment/config-files/php-fpm.conf /usr/local/etc/php-fpm.conf
 
-            ADD /deployment/config-files/nginx.template.conf /etc/nginx/nginx.template
+            ADD /deployment/config-files/nginx.conf /etc/nginx/nginx.conf
             RUN mkdir -p /var/lib/nginx /usr/local/var/log/ & \
                 chown -R www-data /var/lib/nginx /usr/local/var/log/ /etc/nginx/
 
@@ -176,11 +179,64 @@ class DockerComposeFeature extends AbstractFeature
             WORKDIR /app
 
             USER www-data
-            ENTRYPOINT [ \"/entrypoint.sh\" ]
+            ENTRYPOINT [\"/entrypoint-local-dev.sh\"]
         ");
 
         $this->distributionBuilder->addFile('Dockerfile.dev', $dockerfile);
         $this->distributionBuilder->addFile('deployment/config-files/php-fpm.conf', StringBuilder::fromString(file_get_contents(__DIR__ . '/php-fpm.conf')));
         $this->distributionBuilder->addFile('deployment/config-files/nginx.conf', StringBuilder::fromString(file_get_contents(__DIR__ . '/nginx.conf')));
+    }
+
+    private function buildEntrypoint()
+    {
+        $localDevEntrypoint = StringBuilder::fromString(StringOutdenter::outdent("
+            #!/bin/bash
+            set -ex
+
+            composer install
+
+            ./flow doctrine:migrate
+            ./flow user:create --roles Administrator admin password LocalDev Admin || true
+            ./flow resource:publish
+
+            domain='127.0.0.1.nip.io'
+            domains=`./flow domain:list`
+            if [[ \${domains} != *\"\${domain}\"* ]]; then
+              ./flow site:import --package-key {$this->generationContext->getConfiguration()->getSitePackageKey()}
+              echo 'adding http://\$domain'
+              ./flow domain:add --siteNodeName site --hostname \$domain --port 8080 --scheme http
+            fi
+
+            # start nginx
+            nginx &
+
+            exec /usr/local/sbin/php-fpm
+        "));
+
+        $this->distributionBuilder->addFile('deployment/entrypoint-local-dev.sh', $localDevEntrypoint);
+        $this->distributionBuilder->setPermissions('deployment/entrypoint-local-dev.sh', 0755);
+    }
+
+    private function buildFlowConfigForDocker()
+    {
+        $settingsYaml = [
+            'Neos' => [
+                'Flow' => [
+                    'persistence' => [
+                        'backendOptions' => [
+                            'driver' => 'pdo_mysql',
+                            'charset' => 'utf8',
+                            'host' => '%env:DB_NEOS_HOST%',
+                            'port' => '%env:DB_NEOS_PORT%',
+                            'password' => '%env:DB_NEOS_PASSWORD%',
+                            'user' => '%env:DB_NEOS_USER%',
+                            'dbname' => '%env:DB_NEOS_DATABASE%',
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->distributionBuilder->addYamlFile('Configuration/Development/Docker/Settings.yaml', $settingsYaml);
     }
 }

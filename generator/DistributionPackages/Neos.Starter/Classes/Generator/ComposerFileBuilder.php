@@ -29,6 +29,9 @@ class ComposerFileBuilder
 
     public function generate()
     {
+        if (empty($this->composerConfig['require-dev'])) {
+            $this->composerConfig['require-dev'] = new \stdClass();
+        }
         $this->result->addJsonFile($this->fileName, $this->composerConfig);
     }
 

@@ -80,4 +80,9 @@ class DistributionBuilder
     {
         $this->result->addStringFile($fileName, $fileContent);
     }
+
+    public function setPermissions(string $fileName, int $permissions)
+    {
+        $this->result->setPermissions($fileName, $permissions);
+    }
 }

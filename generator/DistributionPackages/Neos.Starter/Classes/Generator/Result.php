@@ -16,6 +16,8 @@ class Result
 
     private array $files = [];
 
+    private array $permissions = [];
+
     /**
      * @var YamlFileManipulator[]
      */
@@ -93,5 +95,15 @@ class Result
 
             file_put_contents($pathAndFilename, $fileContent);
         }
+
+        foreach ($this->permissions as $fileName => $permission) {
+            $pathAndFilename = Files::concatenatePaths([$baseDirectory, $fileName]);
+            chmod($pathAndFilename, $permission);
+        }
+    }
+
+    public function setPermissions(string $fileName, int $permissions)
+    {
+        $this->permissions[$fileName] = $permissions;
     }
 }
