@@ -47,17 +47,17 @@ class PackageBuilder
 
         // TODO: maybe call nodeTypeConstraintProcessor
 
-        $this->result->addYamlFile('DistributionPackages/' . $this->generator->getConfiguration()->getSitePackageKey() . '/Configuration/NodeTypes.' . $fileNamePart . '.yaml', $nodeTypeContent);
+        $this->addConfiguration('NodeTypes', $fileNamePart, $nodeTypeContent);
     }
 
-    public function addFusion(string $pathAndFileName, string $fileContent): void
+    public function addFusion(string $pathAndFileName, StringBuilder $fileContent): void
     {
-
+        $this->result->addStringFile('DistributionPackages/' . $this->generator->getConfiguration()->getSitePackageKey() . "/Resources/Private/Fusion/$pathAndFileName", $fileContent);
     }
 
-    public function addConfiguration(string $type, string $fileNamePart, string $fileContent): void
+    public function addConfiguration(string $type, string $fileNamePart, array $fileContent): void
     {
-        $this->result->addFile("Configuration/{$type}.${fileNamePart}.yaml", $fileContent);
+        $this->result->addYamlFile('DistributionPackages/' . $this->generator->getConfiguration()->getSitePackageKey() . "/Configuration/{$type}.${fileNamePart}.yaml", $fileContent);
     }
 
     public function generate(): void

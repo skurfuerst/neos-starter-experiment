@@ -144,15 +144,28 @@ class NeosFeature extends AbstractFeature
       <uriPathSegment __type="string">home</uriPathSegment>
      </properties>
     </variant>
+
+    <node nodeName="main">
+     <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:ContentCollection" version="1" removed="" hidden="" hiddenInIndex="">
+      <dimensions>
+      </dimensions>
+      <accessRoles __type="array"/>
+      <properties>
+      </properties>
+     </variant>
+    </node>
+
    </node>
   </nodes>
  </site>
 </root>');
 
         $this->addComposerRequirementFromProfile('neos/neos', $this->distributionBuilder->composerJson());
+        $this->addComposerRequirementFromProfile('neos/neos-ui', $this->distributionBuilder->composerJson());
 
         // Ensure the site package is loaded after neos/neos, so that it can override settings lateron.
         $this->distributionBuilder->sitePackage()->composerJson()->requirePackage('neos/neos', '*');
+        $this->distributionBuilder->sitePackage()->composerJson()->requirePackage('neos/neos-ui', '*');
 
         $this->distributionBuilder->sitePackage()->addNodeType('Document.HomePage', [
             $homepageNodeTypeName . '##' => YamlWithComments::comment(StringOutdenter::outdent('
@@ -180,6 +193,63 @@ class NeosFeature extends AbstractFeature
                 ]
             ]
         ]);
+
+        $this->distributionBuilder->sitePackage()->addNodeType('Document.Page', [
+            $pageNodeTypeName . '##' => YamlWithComments::comment(StringOutdenter::outdent('
+                This is the main page node type
+            ')),
+            $pageNodeTypeName => [
+                'ui' => [
+                    'label' => 'Page',
+                    'icon' => 'file',
+                    'help' => [
+                        'message' => 'A page'
+                    ]
+                ],
+                'constraints' => [
+                    'nodeTypes' => [
+                        $homepageNodeTypeName . '##' => YamlWithComments::comment('Inside a page, Homepage is not allowed'),
+                        $homepageNodeTypeName => false
+                    ]
+                ],
+                'superTypes' => [
+                    'Neos.Neos:Document' => true
+                ],
+                'childNodes' => [
+                    'main' => [
+                        'type' => 'Neos.Neos:ContentCollection'
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->distributionBuilder->sitePackage()->addFusion('Root.fusion', StringBuilder::fromString(StringOutdenter::outdent('
+            ##
+            # Include all .fusion files
+            #
+            include: ./**/*.fusion
+        ')));
+
+        $this->distributionBuilder->sitePackage()->addFusion('Document/Page.fusion', StringBuilder::fromString(StringOutdenter::outdent("
+            /**
+             * Default page-rendering for the Neos.Demo website
+             */
+            prototype({$this->generationContext->getConfiguration()->getSitePackageKey()}:Document.Page) < prototype(Neos.Fusion:Component) {
+                mainContent = Neos.Neos:PrimaryContent {
+                    nodePath = 'main'
+                }
+
+                renderer = afx`
+                    <div class=\"container\">
+                        {props.mainContent}
+                    </div>
+                `
+            }
+        ")));
+
+        $this->distributionBuilder->sitePackage()->addFusion('Document/HomePage.fusion', StringBuilder::fromString(StringOutdenter::outdent("
+            prototype({$this->generationContext->getConfiguration()->getSitePackageKey()}:Document.HomePage) < prototype({$this->generationContext->getConfiguration()->getSitePackageKey()}:Document.Page)
+        ")));
     }
 
     public function deactivate()
