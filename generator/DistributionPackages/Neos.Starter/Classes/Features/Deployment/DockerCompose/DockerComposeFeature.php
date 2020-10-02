@@ -83,7 +83,7 @@ class DockerComposeFeature extends AbstractFeature
                         './tmp/composer_cache:/composer_cache:cached',
                     ],
                     'ports' => [
-                        '8081:8081'
+                        '8080:8080'
                     ],
                     'depends_on' => [
                         'maria-db'

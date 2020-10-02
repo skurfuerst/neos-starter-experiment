@@ -5,33 +5,35 @@ declare(strict_types=1);
 namespace Neos\Starter\Features\Seo;
 
 
-class SeoFeature
+use Neos\Starter\Features\AbstractFeature;
+
+class SeoFeature extends AbstractFeature
 {
-    public function prepare(\Neos\Starter\Api\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $projectBuilder)
+    public function registerHooksBeforeActivation()
     {
-        $projectBuilder->sitePackage()->addSuperTypeProcessor(function (string $nodeTypeName, array $superTypes) {
+        $this->distributionBuilder->sitePackage()->addSuperTypeProcessor(function (string $nodeTypeName, array $superTypes) {
             $superTypes['Neos.Neos:Document'] = null;
             return $superTypes;
         });
     }
 
-    public function add(\Neos\Starter\Api\Dto\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $projectBuilder)
+    public function activate()
     {
-        $projectBuilder->sitePackage()->composerJson()->requirePackage('neos/seo');
-        $projectBuilder->sitePackage()->composerJson()->requirePackage('yoast/seo TODO');
+        $this->addComposerRequirementFromProfile('neos/seo', $this->distributionBuilder->composerJson());
+        $this->addComposerRequirementFromProfile('yoast/seo', $this->distributionBuilde->composerJson());
 
-        $projectBuilder->sitePackage()->addNodeType('Document.Foo', [
+        /*$this->distributionBuilder->sitePackage()->addNodeType('Document.Foo', [
             "{$configuration->getSitePackageKey()}:Document.Foo" => [
                 'abstract' => true,
                 'constraints' => []
             ]
         ]);
 
-        $projectBuilder->sitePackage()->addFusion('Root.fusion', '');
+        $projectBuilder->sitePackage()->addFusion('Root.fusion', '');*/
     }
 
-    public function remove(\Neos\Starter\Api\Dto\Configuration $configuration, \Neos\Starter\Generator\DistributionBuilder $projectBuilder)
+    public function deactivate()
     {
-        $projectBuilder->sitePackage()->siteExport()->removeProperties('titleOverride', 'canonicalLink', 'metaRobotsNoindex', 'openGraphType', 'openGraphTitle', 'openGraphDescription', 'openGraphImage', 'metaDescription', 'metaKeywords', 'metaRobotsNoindex', 'metaRobotsNofollow', 'twitterCardType', 'twitterCardCreator', 'twitterCardTitle', 'twitterCardDescription', 'twitterCardImage', 'xmlSitemapChangeFrequency', 'xmlSitemapPriority');
+        $this->distributionBuilder->sitePackage()->siteExport()->removeProperties('titleOverride', 'canonicalLink', 'metaRobotsNoindex', 'openGraphType', 'openGraphTitle', 'openGraphDescription', 'openGraphImage', 'metaDescription', 'metaKeywords', 'metaRobotsNoindex', 'metaRobotsNofollow', 'twitterCardType', 'twitterCardCreator', 'twitterCardTitle', 'twitterCardDescription', 'twitterCardImage', 'xmlSitemapChangeFrequency', 'xmlSitemapPriority');
     }
 }

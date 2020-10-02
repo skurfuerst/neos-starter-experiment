@@ -47,4 +47,9 @@ final class ProjectName implements \JsonSerializable
     {
         return strtolower(preg_replace('/[^a-zA-Z0-9]/', '/', $this->name));
     }
+
+    public function toClassNamePrefix()
+    {
+        return str_replace('.', '\\', $this->toPackageKey());
+    }
 }

@@ -22,7 +22,7 @@ class PackageBuilder
         $this->generator = $generator;
         $this->result = $result;
         $this->composerJson = new ComposerFileBuilder($this->generator, $this->result, 'DistributionPackages/' . $generator->getConfiguration()->getSitePackageKey() . '/composer.json');
-        $this->siteExport = new SiteExportManipulator($this->generator, $this->result, 'DistributionPackages/' . $generator->getConfiguration()->getSitePackageKey() . '/Resources/Private/Content.xml');
+        $this->siteExport = new SiteExportManipulator($this->generator, $this->result, 'DistributionPackages/' . $generator->getConfiguration()->getSitePackageKey() . '/Resources/Private/Content/Sites.xml');
     }
 
 
@@ -40,15 +40,14 @@ class PackageBuilder
                 $superTypes = $superTypeProcessor($nodeTypeName, $superTypes);
             }
 
-            if (!count($superTypes)) {
+            if (count($superTypes)) {
                 $nodeTypeConfiguration['superTypes'] = $superTypes;
             }
         }
 
         // TODO: maybe call nodeTypeConstraintProcessor
 
-        $fileContent = YamlWithComments::dump($nodeTypeContent);
-        $this->result->addFile('Configuration/NodeTypes.' . $fileNamePart . '.yaml', $fileContent);
+        $this->result->addYamlFile('DistributionPackages/' . $this->generator->getConfiguration()->getSitePackageKey() . '/Configuration/NodeTypes.' . $fileNamePart . '.yaml', $nodeTypeContent);
     }
 
     public function addFusion(string $pathAndFileName, string $fileContent): void
@@ -64,6 +63,7 @@ class PackageBuilder
     public function generate(): void
     {
         $this->composerJson->generate();
+        $this->siteExport->generate();
     }
 
     public function siteExport(): SiteExportManipulator

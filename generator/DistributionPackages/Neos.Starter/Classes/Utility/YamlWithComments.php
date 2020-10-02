@@ -20,7 +20,7 @@ class YamlWithComments
     {
         $sortedInput = self::sort($input);
 
-        $yamlAsString = Yaml::dump($sortedInput, 100);
+        $yamlAsString = Yaml::dump($sortedInput, 100, 2);
 
         // first, replace the comment keys of the form 'bla##': ...
         $yamlAsString = preg_replace_callback("|^(\s*)'[^']+##': '##([a-zA-Z0-9+=/]+)'$|m", function ($a) {
@@ -28,7 +28,7 @@ class YamlWithComments
             $comment = base64_decode($a[2]);
             $commentLines = explode("\n", $comment);
             $prefix = $indentation . '# ';
-            return "\n" . $prefix . implode("\n" . $prefix, $commentLines);
+            return $prefix . implode("\n" . $prefix, $commentLines);
         }, $yamlAsString);
 
         // second, replace the comment keys of the form - '##...'
@@ -37,7 +37,7 @@ class YamlWithComments
             $comment = base64_decode($a[2]);
             $commentLines = explode("\n", $comment);
             $prefix = $indentation . '# ';
-            return "\n" . $prefix . implode("\n" . $prefix, $commentLines);
+            return $prefix . implode("\n" . $prefix, $commentLines);
         }, $yamlAsString);
 
         return StringBuilder::fromString($yamlAsString);

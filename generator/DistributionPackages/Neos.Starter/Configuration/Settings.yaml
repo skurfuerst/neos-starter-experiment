@@ -1,0 +1,12 @@
+Neos:
+  Starter:
+    features:
+      # this feature must come first; as it creates the baseline for all other features (e.g. defines the start
+      # of the README)
+      'Neos\Starter\Features\Neos\NeosFeature':
+        position: 'start'
+
+      # for all remaining features, order should not matter.
+      'Neos\Starter\Features\Deployment\DockerCompose\DockerComposeFeature': true
+      'Neos\Starter\Features\Deployment\Redis\RedisFeature': true
+      'Neos\Starter\Features\Seo\SeoFeature': true

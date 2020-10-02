@@ -4,15 +4,10 @@
 namespace Neos\Starter\Generator;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Starter\Api\Configuration;
 use Neos\Starter\Features\FeatureInterface;
 use Neos\Starter\Generator\Dto\Profile;
-use Neos\Starter\Generator\Hooks\JsonFileManipulator;
-use Neos\Starter\Generator\Hooks\StringFileManipulator;
-use Neos\Starter\Generator\Hooks\YamlFileManipulator;
-use Neos\Starter\Utility\YamlWithComments;
+use Neos\Utility\PositionalArraySorter;
 
 class Generator implements GenerationContextInterface
 {
@@ -20,10 +15,10 @@ class Generator implements GenerationContextInterface
     protected Configuration $configuration;
 
     /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
+     * @Flow\InjectConfiguration(path="features")
+     * @var array
      */
-    protected $objectManager;
+    protected $registeredFeatures;
 
 
     protected $activeFeatures;
@@ -43,7 +38,7 @@ class Generator implements GenerationContextInterface
     {
         $distributionBuilder = new DistributionBuilder($this);
 
-        $featureClassNames = self::featureImplementations($this->objectManager);
+        $featureClassNames = $this->getFeatureImplementations();
         $activeFeatures = [];
         $inactiveFeatures = [];
         foreach ($featureClassNames as $featureClassName) {
@@ -83,14 +78,9 @@ class Generator implements GenerationContextInterface
         return $this->configuration;
     }
 
-    /**
-     * @Flow\CompileStatic
-     * @param ObjectManagerInterface $objectManager
-     */
-    protected static function featureImplementations($objectManager)
+    protected function getFeatureImplementations()
     {
-        $reflectionService = $objectManager->get(ReflectionService::class);
-        return $reflectionService->getAllImplementationClassNamesForInterface(FeatureInterface::class);
+        return (new PositionalArraySorter($this->registeredFeatures))->getSortedKeys();
     }
 
     public function getCurrentlyActiveProfile(): Profile

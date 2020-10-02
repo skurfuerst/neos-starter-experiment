@@ -70,6 +70,11 @@ class Configuration implements \JsonSerializable
         return $this->projectName->toPackageKey();
     }
 
+    public function getSiteClassNamePrefix(): string
+    {
+        return $this->projectName->toClassNamePrefix();
+    }
+
     public function getSiteComposerKey(): string
     {
         return $this->projectName->toComposerKey();
