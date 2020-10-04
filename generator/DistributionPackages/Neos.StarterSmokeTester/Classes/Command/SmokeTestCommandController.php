@@ -48,8 +48,10 @@ class SmokeTestCommandController extends CommandController
             $manifestHash = sha1(json_encode($manifestFileContents));
             if (isset($alreadyTestedFeatureHashes[$manifestHash])) {
                 $this->outputLine('Skipping ' . $manifestHash . ' (already done)');
+                sleep(1);
                 continue;
             }
+            $alreadyTestedFeatureHashes[$manifestHash] = true;
 
             $this->outputLine($manifestHash);
             $outputFolder = Files::concatenatePaths([$baseOutputFolder, $manifestHash]);
