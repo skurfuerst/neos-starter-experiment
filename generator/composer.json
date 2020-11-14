@@ -19,6 +19,7 @@
         "neos/flow": "~6.2.0",
         "neos/starter": "@dev",
         "neos/starter-smoke-tester": "@dev",
+        "neos/starter-hoster": "@dev",
         "neos/welcome": "~6.2.0",
         "ext-json": "*"
     },

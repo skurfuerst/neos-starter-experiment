@@ -1,0 +1,14 @@
+{
+    "name": "neos/starter-hoster",
+    "type": "neos-package",
+    "description": "Neos Starter Hoster",
+    "license": ["LGPL-3.0-or-later"],
+    "require": {
+        "neos/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\StarterHoster\\": "Classes"
+        }
+    }
+}
