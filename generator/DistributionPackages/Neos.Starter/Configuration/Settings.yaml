@@ -6,7 +6,8 @@ Neos:
       'Neos\Starter\Features\Neos\NeosFeature':
         position: 'start'
 
-      # for all remaining features, order should not matter.
+      # order is somehow relevant, because it makes the output deterministic (e.g. in README.md sections)
+      'Neos\Starter\Features\Frontend\WebpackBuildSetup\WebpackBuildSetupFeature': true
       'Neos\Starter\Features\Deployment\DockerCompose\DockerComposeFeature': true
       'Neos\Starter\Features\Deployment\Redis\RedisFeature': true
       'Neos\Starter\Features\Seo\SeoFeature': true

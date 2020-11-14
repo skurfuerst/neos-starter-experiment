@@ -52,7 +52,12 @@ class PackageBuilder
 
     public function addFusion(string $pathAndFileName, StringBuilder $fileContent): void
     {
-        $this->result->addStringFile('DistributionPackages/' . $this->generator->getConfiguration()->getSitePackageKey() . "/Resources/Private/Fusion/$pathAndFileName", $fileContent);
+        $this->addStringFile('Resources/Private/Fusion/' . $pathAndFileName, $fileContent);
+    }
+
+    public function addStringFile(string $pathAndFileName, StringBuilder $fileContent): void
+    {
+        $this->result->addStringFile('DistributionPackages/' . $this->generator->getConfiguration()->getSitePackageKey() . "/$pathAndFileName", $fileContent);
     }
 
     public function addConfiguration(string $type, string $fileNamePart, array $fileContent): void

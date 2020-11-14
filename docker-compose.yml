@@ -11,6 +11,13 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       FLOW_CONTEXT: 'Development/Docker'
+
+      DB_NEOS_HOST: 'db'
+      DB_NEOS_PORT: 3306
+      DB_NEOS_USER: 'root'
+      DB_NEOS_PASSWORD: 'neos'
+      DB_NEOS_DATABASE: 'generator'
+
     volumes:
       - ./generator/composer.json:/app/composer.json:cached
       - ./generator/composer.lock:/app/composer.lock:cached
@@ -20,13 +27,42 @@ services:
     ports:
       - 8081:8081
 
+  # Neos CMS
+  profile-2020-09-a:
+    build:
+      context: profiles/2020-09-a/
+      dockerfile: Dockerfile.dev
+    environment:
+      FLOW_CONTEXT: 'Development/Docker'
+
+      DB_NEOS_HOST: 'db'
+      DB_NEOS_PORT: 3306
+      DB_NEOS_USER: 'root'
+      DB_NEOS_PASSWORD: 'neos'
+      DB_NEOS_DATABASE: 'profile-2020-09-a'
+
+    volumes:
+      - ./generator/composer.json:/app/composer.json:cached
+      - ./generator/composer.lock:/app/composer.lock:cached
+      - ./generator/Configuration/:/app/Configuration/:cached
+      - ./generator/DistributionPackages/:/app/DistributionPackages/:cached
+      # if you work on other packages, you need to add them here.
+    ports:
+      - 8081:8081
+
+
+
   # DB
   db:
     image: mariadb:10.3
     environment:
-      MYSQL_ROOT_PASSWORD: 'db'
+      MYSQL_ROOT_PASSWORD: neos
+      MYSQL_DATABASE: neos
+      MYSQL_USER: neos
+      MYSQL_PASSWORD: neos
     volumes:
       - db:/var/lib/mysql
+      - ./entrypoint-initdb.d/:/docker-entrypoint-initdb.d
     ports:
       - 13306:3306
 

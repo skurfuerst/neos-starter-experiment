@@ -27,6 +27,11 @@ class StringBuilder
         return $builder;
     }
 
+    public static function fromFileContents(string $pathAndFileName): self
+    {
+        return self::fromString(file_get_contents($pathAndFileName));
+    }
+
     public function addString(string $string, string $position = null): self
     {
         $this->stringParts[] = [

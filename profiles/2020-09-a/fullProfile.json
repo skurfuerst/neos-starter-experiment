@@ -1,5 +1,6 @@
 {
     "projectName": "Sandstorm Site",
+    "profileName": "2020-09-a",
     "features": [
         {
             "name": "Neos"
@@ -12,6 +13,9 @@
         },
         {
             "name": "Vips"
+        },
+        {
+            "name": "WebpackBuildSetup"
         }
     ]
 }

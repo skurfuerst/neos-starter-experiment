@@ -1,5 +1,21 @@
 # Neos Starter and Demo Site
 
+## Getting Started
+
+### Contentpflege
+
+```
+cd generator
+composer install
+./flow starter:kickstart ../profiles/2020-09-a/fullProfile.json ../profiles/2020-09-a-full-instance
+cd ../
+
+cd profiles/2020-09-a-full-instance
+docker-compose build --pull
+docker-compose up -d
+```
+
+
 ## What do we want?
 
 We want to create an easy way to try out Neos and ensure people are getting started with best practices enabled.

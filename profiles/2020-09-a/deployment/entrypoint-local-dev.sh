@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ex
 
+composer install
 composer remove $PACKAGES_TO_REMOVE
 # TODO: add new site package
 ./flow doctrine:migrate
