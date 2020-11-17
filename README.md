@@ -2,6 +2,12 @@
 
 ## Getting Started
 
+### Update from Neos.Demo
+
+cd generator
+make updateFromNeosDemo
+
+
 ### Contentpflege
 
 ```
@@ -14,6 +20,11 @@ cd profiles/2020-09-a-full-instance
 docker-compose build --pull
 docker-compose up -d
 ```
+
+
+
+
+
 
 
 ## What do we want?

@@ -129,6 +129,7 @@ class NeosFeature extends AbstractFeature
 
         $homepageNodeTypeName = $this->generationContext->getConfiguration()->getSitePackageKey() . ':Document.HomePage';
         $pageNodeTypeName = $this->generationContext->getConfiguration()->getSitePackageKey() . ':Document.Page';
+        $notFoundPageNodeTypeName = $this->generationContext->getConfiguration()->getSitePackageKey() . ':Document.NotFoundPage';
 
         $this->distributionBuilder->sitePackage()->siteExport()->setInitialSiteXml('<?xml version="1.0" encoding="UTF-8"?>
 <root>
@@ -154,6 +155,17 @@ class NeosFeature extends AbstractFeature
       </properties>
      </variant>
     </node>
+    <node identifier="' . Uuid::uuid4()->toString() . '" nodeName="notfound">
+     <variant sortingIndex="100" workspace="live" nodeType="' . $notFoundPageNodeTypeName . '" version="1" removed="" hidden="" hiddenInIndex="1">
+      <dimensions>
+      </dimensions>
+      <accessRoles __type="array"/>
+      <properties>
+       <title __type="string">Not Found</title>
+       <uriPathSegment __type="string">notfound</uriPathSegment>
+       <metaRobotsNoindex __type="boolean">true</metaRobotsNoindex>
+      </properties>
+     </variant>
 
    </node>
   </nodes>
@@ -223,6 +235,28 @@ class NeosFeature extends AbstractFeature
             ]
         ]);
 
+        $this->distributionBuilder->sitePackage()->addNodeType('Document.NotFoundPage', [
+            $notFoundPageNodeTypeName => [
+                'ui' => [
+                    'label' => 'Not Found',
+                    'icon' => 'times',
+                    'help' => [
+                        'message' => 'This page is displayed in case of a 404 error.'
+                    ]
+                ],
+                'constraints##' => YamlWithComments::comment('no further sub documents are allowed here'),
+                'constraints' => [
+                    'nodeTypes' => [
+                        'Neos.Neos:Document' => false
+                    ]
+                ],
+                'superTypes' => [
+                    $pageNodeTypeName => true
+                ],
+            ]
+        ]);
+
+
         $this->distributionBuilder->sitePackage()->addFusion('Root.fusion', StringBuilder::fromString(StringOutdenter::outdent('
             ##
             # Include all .fusion files
@@ -231,9 +265,6 @@ class NeosFeature extends AbstractFeature
         ')));
 
         $this->distributionBuilder->sitePackage()->addFusion('Document/Page.fusion', StringBuilder::fromString(StringOutdenter::outdent("
-            /**
-             * Default page-rendering for the Neos.Demo website
-             */
             prototype({$this->generationContext->getConfiguration()->getSitePackageKey()}:Document.Page) < prototype(Neos.Fusion:Component) {
                 mainContent = Neos.Neos:PrimaryContent {
                     nodePath = 'main'
