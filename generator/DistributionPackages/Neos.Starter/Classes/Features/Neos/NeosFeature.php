@@ -130,7 +130,7 @@ class NeosFeature extends AbstractFeature
         $homepageNodeTypeName = $this->generationContext->getConfiguration()->getSitePackageKey() . ':Document.HomePage';
         $pageNodeTypeName = $this->generationContext->getConfiguration()->getSitePackageKey() . ':Document.Page';
 
-        $this->distributionBuilder->sitePackage()->siteExport()->setInitialSiteXml('<?xml version="1.0" encoding="UTF-8"?>
+/*        $this->distributionBuilder->sitePackage()->siteExport()->setInitialSiteXml('<?xml version="1.0" encoding="UTF-8"?>
 <root>
  <site name="Site" state="1" siteResourcesPackageKey="' . $this->generationContext->getConfiguration()->getSitePackageKey() . '" siteNodeName="site">
   <nodes formatVersion="2.0">
@@ -157,9 +157,10 @@ class NeosFeature extends AbstractFeature
   </nodes>
  </site>
 </root>');
-
+*/
         $this->addComposerRequirementFromProfile('neos/neos', $this->distributionBuilder->composerJson());
         $this->addComposerRequirementFromProfile('neos/neos-ui', $this->distributionBuilder->composerJson());
+        $this->distributionBuilder->composerJson()->requirePackage('typo3fluid/fluid', '2.6.9'); // 2.6.10 breaks
 
         // Ensure the site package is loaded after neos/neos, so that it can override settings lateron.
         $this->distributionBuilder->sitePackage()->composerJson()->requirePackage('neos/neos', '*');

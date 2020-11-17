@@ -31,6 +31,9 @@ class DockerComposeFeature extends AbstractFeature
         $this->buildDockerfile();
         $this->buildEntrypoint();
         $this->buildFlowConfigForDocker();
+
+        $readmeSnippet = file_get_contents(__DIR__ . '/README_infrastructure.md');
+        $this->distributionBuilder->readme()->addSection($readmeSnippet);
     }
 
     public function deactivate()
@@ -39,6 +42,7 @@ class DockerComposeFeature extends AbstractFeature
 
     private function buildDockerComposeFile()
     {
+
         $dockerComposeFile = [
             'version##' => YamlWithComments::comment('
                 ##################################################
@@ -78,16 +82,20 @@ class DockerComposeFeature extends AbstractFeature
                         './DistributionPackages/:/app/DistributionPackages/:ro,cached',
                         YamlWithComments::comment('Content is writable to enable content dumps from inside the container'),
                         "./DistributionPackages/{$this->generationContext->getConfiguration()->getSitePackageKey()}/Resources/Private/Content:/app/DistributionPackages/{$this->generationContext->getConfiguration()->getSitePackageKey()}/Resources/Private/Content/:cached",
-                        './Configuration/Development/Docker/:/app/Configuration/Development/Docker/:ro,cached',
+                        './Configuration/:/app/Configuration/:cached',
                         YamlWithComments::comment('Explicitly set up Composer cache for faster fetching of packages'),
                         './tmp/composer_cache:/composer_cache:cached',
+
+                        YamlWithComments::comment('mysql and resources are stored in an extra volume, to survive a container rebuild'),
+                        '/app/Data/Persistent'
                     ],
                     'ports' => [
                         '8080:8080'
                     ],
                     'depends_on' => [
                         'maria-db'
-                    ]
+                    ],
+                    'entrypoint##' => YamlWithComments::comment("to debug startup issues, comment-in the following line before running 'docker-compose up -d': \nentrypoint: ['/bin/sleep', '1000000']")
                 ],
                 'maria-db##' => YamlWithComments::comment('Maria DB'),
                 'maria-db' => [
@@ -102,7 +110,11 @@ class DockerComposeFeature extends AbstractFeature
                         'MYSQL_PASSWORD' => 'neos',
                     ],
                     'command##' => YamlWithComments::comment('use Unicode encoding as default!'),
-                    'command' => ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+                    'command' => ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci'],
+                    'volumes' => [
+                        YamlWithComments::comment('mysql and resources are stored in an extra volume, to survive a container rebuild'),
+                        '/var/lib/mysql'
+                    ]
                 ]
             ]
         ];
@@ -114,6 +126,8 @@ class DockerComposeFeature extends AbstractFeature
                     '16379:6379'
                 ],
             ];
+            $dockerComposeFile['services']['neos']['environment']['NEOS_REDIS_HOST'] = 'redis';
+            $dockerComposeFile['services']['neos']['environment']['NEOS_REDIS_PORT'] = '6379';
         }
 
         $this->distributionBuilder->addYamlFile('docker-compose.yml', $dockerComposeFile);
@@ -225,7 +239,7 @@ class DockerComposeFeature extends AbstractFeature
                     'persistence' => [
                         'backendOptions' => [
                             'driver' => 'pdo_mysql',
-                            'charset' => 'utf8',
+                            'charset' => 'utf8mb4',
                             'host' => '%env:DB_NEOS_HOST%',
                             'port' => '%env:DB_NEOS_PORT%',
                             'password' => '%env:DB_NEOS_PASSWORD%',

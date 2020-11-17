@@ -4,8 +4,7 @@
 
 ### Update from Neos.Demo
 
-cd generator
-make updateFromNeosDemo
+make example1
 
 
 ### Contentpflege
@@ -13,8 +12,8 @@ make updateFromNeosDemo
 ```
 cd generator
 composer install
-./flow starter:kickstart ../profiles/2020-09-a/fullProfile.json ../profiles/2020-09-a-full-instance
-cd ../
+cd ..
+make example1
 
 cd profiles/2020-09-a-full-instance
 docker-compose build --pull

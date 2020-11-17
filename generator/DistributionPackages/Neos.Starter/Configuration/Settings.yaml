@@ -10,4 +10,5 @@ Neos:
       'Neos\Starter\Features\Sites\NeosDemo\NeosDemoSiteFeature': true
       'Neos\Starter\Features\Deployment\DockerCompose\DockerComposeFeature': true
       'Neos\Starter\Features\Deployment\Redis\RedisFeature': true
+      'Neos\Starter\Features\Deployment\Vips\VipsFeature': true
       'Neos\Starter\Features\Packages\Seo\SeoFeature': true

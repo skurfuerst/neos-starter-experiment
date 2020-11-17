@@ -32,17 +32,29 @@ class NeosDemoSiteFeature extends AbstractFeature
         $finder->notPath('Classes');
         $finder->notPath('Private/Partials');
         $finder->notPath('Private/Templates/');
-        $finder->notPath('Private/Content');
         $finder->notPath('Migrations');
         $finder->notPath('Configuration/Settings.yaml');
         $finder->notPath('Configuration/Policy.yaml');
         $finder->notPath('Readme.rst');
 
         foreach ($finder->files() as $file) {
-            $contents = $file->getContents();
-            $contents = str_replace('Neos.Demo', $this->generationContext->getConfiguration()->getSitePackageKey(), $contents);
-            $this->distributionBuilder->sitePackage()->addStringFile($file->getRelativePathname(), StringBuilder::fromString($contents));
+            if ($file->getRelativePathname() === 'Resources/Private/Content/Sites.xml') {
+                $this->distributionBuilder->sitePackage()->siteExport()->setInitialSiteXml($file->getContents());
+            } else {
+                $contents = $file->getContents();
+                $contents = str_replace('Neos.Demo', $this->generationContext->getConfiguration()->getSitePackageKey(), $contents);
+                $this->distributionBuilder->sitePackage()->addStringFile($file->getRelativePathname(), StringBuilder::fromString($contents));
+            }
         }
+
+        $neosDemoComposerJson = json_decode(file_get_contents($baseDirectory . '/composer.json'), true);
+        foreach ($neosDemoComposerJson['require'] as $package => $version) {
+            if ($package !== 'neos/neos') {
+                $this->distributionBuilder->sitePackage()->composerJson()->requirePackage($package, $version);
+            }
+        }
+
+        $this->distributionBuilder->sitePackage()->siteExport()->onlyKeepSingleLanguageVariantAndRenameTo('en_US', '');
 
         $readmeSnippet = file_get_contents(__DIR__ . '/README_frontend.md');
         $this->distributionBuilder->readme()->addSection($readmeSnippet);
