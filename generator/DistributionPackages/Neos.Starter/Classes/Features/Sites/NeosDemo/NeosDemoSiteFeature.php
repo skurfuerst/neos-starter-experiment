@@ -37,6 +37,16 @@ class NeosDemoSiteFeature extends AbstractFeature
         $finder->notPath('Configuration/Policy.yaml');
         $finder->notPath('Readme.rst');
 
+        $singleLanguage = true;
+        if ($singleLanguage) {
+            $this->distributionBuilder->sitePackage()->siteExport()->onlyKeepSingleLanguageVariantAndRenameTo('en_US', '');
+            $finder->notPath('Resources/Private/Fusion/Document/Fragment/Menu/Language.fusion');
+
+            $contents = file_get_contents(__DIR__ . '/singleLanguage/Language.fusion');
+            $contents = str_replace('Neos.Demo', $this->generationContext->getConfiguration()->getSitePackageKey(), $contents);
+            $this->distributionBuilder->sitePackage()->addStringFile('Resources/Private/Fusion/Document/Fragment/Menu/Language.fusion', StringBuilder::fromString($contents));
+        }
+
         foreach ($finder->files() as $file) {
             if ($file->getRelativePathname() === 'Resources/Private/Content/Sites.xml') {
                 $this->distributionBuilder->sitePackage()->siteExport()->setInitialSiteXml($file->getContents());
@@ -53,8 +63,6 @@ class NeosDemoSiteFeature extends AbstractFeature
                 $this->distributionBuilder->sitePackage()->composerJson()->requirePackage($package, $version);
             }
         }
-
-        $this->distributionBuilder->sitePackage()->siteExport()->onlyKeepSingleLanguageVariantAndRenameTo('en_US', '');
 
         $readmeSnippet = file_get_contents(__DIR__ . '/README_frontend.md');
         $this->distributionBuilder->readme()->addSection($readmeSnippet);
