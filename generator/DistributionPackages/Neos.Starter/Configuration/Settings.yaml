@@ -7,7 +7,7 @@ Neos:
         position: 'start'
 
       # order is somehow relevant, because it makes the output deterministic (e.g. in README.md sections)
-      'Neos\Starter\Features\Frontend\WebpackBuildSetup\WebpackBuildSetupFeature': true
+      'Neos\Starter\Features\Sites\NeosDemo\NeosDemoSiteFeature': true
       'Neos\Starter\Features\Deployment\DockerCompose\DockerComposeFeature': true
       'Neos\Starter\Features\Deployment\Redis\RedisFeature': true
-      'Neos\Starter\Features\Seo\SeoFeature': true
+      'Neos\Starter\Features\Packages\Seo\SeoFeature': true

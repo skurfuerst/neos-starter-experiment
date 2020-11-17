@@ -76,7 +76,7 @@ class Result
         }
 
         if (isset($this->files[$fileName])) {
-            throw new \RuntimeException('TODO - not supported');
+            throw new \RuntimeException('File ' . $fileName . ' already registered; this is not supported.');
         }
 
         $this->files[$fileName] = $fileContent->build();

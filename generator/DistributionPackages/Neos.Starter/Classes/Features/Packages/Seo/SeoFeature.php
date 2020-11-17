@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Starter\Features\Seo;
+namespace Neos\Starter\Features\Packages\Seo;
 
 
 use Neos\Starter\Features\AbstractFeature;

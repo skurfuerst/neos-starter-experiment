@@ -16,16 +16,15 @@
         "bin-dir": "bin"
     },
     "require": {
-        "neos/flow": "~6.2.0",
+        "neos/flow": "~6.3.0",
+        "typo3fluid/fluid": "2.6.9",
         "neos/starter": "@dev",
         "neos/starter-smoke-tester": "@dev",
         "neos/starter-hoster": "@dev",
-        "neos/welcome": "~6.2.0",
         "ext-json": "*"
     },
     "require-dev": {
-        "neos/kickstarter": "~6.2.0",
-        "neos/buildessentials": "~6.2.0",
+        "neos/buildessentials": "~6.3.0",
         "neos/behat": "dev-master",
         "phpunit/phpunit": "~8.1",
         "mikey179/vfsstream": "~1.6"
@@ -37,7 +36,7 @@
         }
     },
     "replace": {
-        "typo3/flow-base-distribution": "6.2.3"
+        "typo3/flow-base-distribution": "6.3.3"
     },
     "suggest": {
         "ext-pdo_sqlite": "For running functional tests out-of-the-box this is required"
