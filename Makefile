@@ -3,5 +3,5 @@ example1:
 
 
 updateFromNeosDemo:
-	# git subtree add --prefix generator/subtrees/Neos.Demo https://github.com/neos/Neos.Demo.git master --squash
+	# git subtree add --prefix generator/subtrees/Neos.Demo https://github.com/neos/Neos.Demo.git 6.2.0 --squash
 	git subtree pull --prefix generator/subtrees/Neos.Demo https://github.com/neos/Neos.Demo.git 6.2.0 --squash
