@@ -37,6 +37,10 @@ class NeosDemoSiteFeature extends AbstractFeature
         $finder->notPath('Configuration/Policy.yaml');
         $finder->notPath('Readme.rst');
 
+        $finder->notPath('NodeTypes.Document.Chapter.yaml');
+        $finder->notPath('Chapter.xlf');
+        $finder->notPath('Chapter.fusion');
+
         $singleLanguage = true;
         if ($singleLanguage) {
             $this->distributionBuilder->sitePackage()->siteExport()->onlyKeepSingleLanguageVariantAndRenameTo('en_US', '');
@@ -66,6 +70,24 @@ class NeosDemoSiteFeature extends AbstractFeature
 
         $readmeSnippet = file_get_contents(__DIR__ . '/README_frontend.md');
         $this->distributionBuilder->readme()->addSection($readmeSnippet);
+
+
+        $this->distributionBuilder->sitePackage()->addConfiguration('Settings', 'translation', [
+            'Neos' => [
+                'Neos' => [
+                    'userInterface' => [
+                        'translation' => [
+                            'autoInclude' => [
+                                $this->generationContext->getConfiguration()->getSitePackageKey() => [
+                                    'Main',
+                                    'NodeTypes/*'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
     }
 
     public function deactivate()
